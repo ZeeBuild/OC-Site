@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="A timed addition and subtraction game with an on-screen numpad and high scores." />
-  <title>Math — OC-Site</title>
+  <title>Math — Zee Site</title>
   <style>
     :root {
       --bg: #0d1117;
@@ -36,6 +36,9 @@
 
     .brand { text-decoration: none; color: var(--text); font-weight: 700; font-size: 1.1rem; }
     .brand span { color: var(--accent); }
+    .game-nav { display: flex; gap: 1.25rem; }
+    .game-nav a { color: var(--muted); text-decoration: none; font-size: 0.95rem; }
+    .game-nav a:hover { color: var(--text); }
 
     .hud {
       display: flex;
@@ -157,6 +160,10 @@
 </head>
 <body>
   <a class="brand" href="index.html">Zee<span> Site</span> / Math</a>
+  <nav class="game-nav">
+    <a href="snake.html">Snake</a>
+    <a href="plates.html">Plates</a>
+  </nav>
 
   <div class="hud">
     <div><div class="label">Score</div><div class="value" id="score">0</div></div>
@@ -237,7 +244,10 @@
     const againBtn = document.getElementById('againBtn');
 
     let best = 0;
-    try { best = Number(localStorage.getItem('math-best') || 0); } catch (e) { /* storage unavailable */ }
+    try {
+      const stored = Number(localStorage.getItem('math-best') || 0);
+      if (Number.isFinite(stored) && stored >= 0) best = stored;
+    } catch (e) { /* storage unavailable */ }
 
     let roundSeconds = 60;
     let secondsLeft = 60;
@@ -412,7 +422,8 @@
 
     document.addEventListener('keydown', (e) => {
       if (!running) {
-        if ((e.key === 'Enter' || e.code === 'Space') && !e.target.closest('button')) {
+        const onButton = e.target instanceof Element && e.target.closest('button');
+        if ((e.key === 'Enter' || e.code === 'Space') && !onButton) {
           e.preventDefault();
           start();
         }
@@ -424,7 +435,7 @@
       } else if (e.key === 'Backspace') {
         e.preventDefault();
         backspace();
-      } else if (e.key === 'Delete' || e.key === 'Escape') {
+      } else if (e.key === 'Delete' || e.key === 'Escape' || e.key.toLowerCase() === 'c') {
         e.preventDefault();
         clearAnswer();
       } else if (e.key === 'Enter') {
